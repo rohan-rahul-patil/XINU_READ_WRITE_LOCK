@@ -1,0 +1,97 @@
+
+NAME - 		ROHAN PATIL
+STUDENT ID -	20261263
+
+_____________________________________________________________________________________________________________________________________________
+
+Ans 1a) Priority ceiling is another approach through which we can overcome priority inheritance problem. In priority ceiling approach, each
+      resource is assigned a priority (usually higher than any task's priority) and whenver a process requests the resource, the resource is 
+      granted to the process (if available) and the process's priority is set to the resource's prioirty. Thus, this task would now, literally
+      have the highest priority. 
+
+_____________________________________________________________________________________________________________________________________________
+
+Ans 1b) This test case has two test cases one for semaphore(witout inheritance) and one for lock(with inheritance)
+	Semaphore test:
+		I created two process P1 (priority 30) and P2 (priority 20). I made P2 hold the semaphore and let P1 wait for the semaphore. 
+		While P2 is holding the semaphore and P1 is waiting for it, I created another process M (priority 25). I recorded the time 
+		takes it for P1 to get the semaphore in presence of M.
+
+	Lock test:
+		I created two process Reader (priority 30) and Writer (priority 20). I made Writer hold the lock and let Reader wait for the
+		 lock. While Writer is holding the lock and Reader is waiting for it, I created another process M (priority 25). I recorded 
+		the time it takes for Reader to get the lock in presence of M.
+
+
+	Test Case Output
+
+	os_init : PCI BIOS revision 2.10 entry at 0xfd482
+	pci_init: PCI BIOS initialization succeeded
+
+
+	Xinu Version (CSC501 1-2017 base) #1 (rrpatil3@vclv98-241.hpc) Fri Dec 7 13:29:29 EST 2018
+
+	16777216 bytes real mem
+	105231 bytes Xinu code
+	clock enabled
+
+
+	___________________________semaphore test________________________________________________
+
+
+	Test 3: test the basic priority inheritence
+	-start process1, then sleep 1s. semaphore granted to P1 (prio 20)
+	  	P1: to acquire semaphore
+  		P1: acquired semapore at time 3
+  		P1: to release semaphore
+	-start process2, then sleep 1s. P2(prio 30) blocked on the semaphore
+  		P2: to acquire semaphore
+	-start process P, then sleep 1s, process P(prio 25)
+		process M started at time 2013
+		M ended
+  		P2: acquired semapore at time 16562
+  		P2: to release semaphore
+	semaphore test done
+	time required for P2 to aquire lock = 16559 ms
+
+
+	___________________________lock test_____________________________________________________
+
+
+	Test 3: test the basic priority inheritence
+	-start writer, then sleep 1s. lock granted to write (prio 20)
+		writer: to acquire lock
+		writer: acquired lock, at time 28258
+	-start reader B, then sleep 1s. reader(prio 30) blocked on the lock
+  		reader: to acquire lock
+  		writer: to release lock
+  		reader: acquired lock at time 35491
+  		reader: to release lock
+	-start process P, then sleep 1s, process P(prio 25)
+		process M started at time 36491
+		M ended
+	lock test done
+	time required for reader to aquire lock = 7233 ms
+
+	
+	Explaination:
+		      In the semaphore test there was no priority inheritance implemented, hence the process M could preempt P1 since it has
+		      a higher priority than P1 while P2 having the highest priority is still waiting. It takes 16559ms for P1 to finally
+		      get the lock.
+		
+		      In the lock test there was priority inheritance implemented, hence the process M could not ptreempt Writer even though 
+		      it had higher priority than Writer because Writer inhereted the priority of Reader . It takes 7233ms for Reader to get
+		      the lock which is less than the time in the first test case.
+
+
+______________________________________________________________________________________________________________________________________________
+	
+Ans 2) In the code given in task2_sync_issue.c multiple reader threads can modify the global buffer. Consier the following scenario, There 
+       are two reader threads. Since these are reader threads these two can aquire locks at the same time. if one of the threads runs till 
+       line in the buffer_add where buffer length is updated and if the other thread is context switched at this time then this thread will
+       unmodified length and will overwrite the changes made by the previous thread. This happens becuse the gloabl variables are not handled 	     with mutual exclusion hence the solution to counter this would be to lock these global variables by using mutualy exclusive locks.
+       such as a write lock.
+
+______________________________________________________________________________________________________________________________________________
+
+
